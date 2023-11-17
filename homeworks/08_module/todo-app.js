@@ -37,32 +37,51 @@
         return list;
     }
 
-    function createTodoItem(task) {
-        let itemObject = {
-            item : document.createElement('li'),
-            done : task.done
-        };
+    function createTodoItem(task, listName) {
+        let itemHTML = document.createElement('li');
         let buttonGroup = document.createElement('div');
         let doneButton = document.createElement('button');
         let deleteButton = document.createElement('button');
+        let tasksList;
 
-        itemObject.item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-        itemObject.item.textContent = task.name;
+        if (task.done) {
+            itemHTML.classList.toggle('list-group-item-success');
+        }
+        itemHTML.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        itemHTML.textContent = task.name;
 
         buttonGroup.classList.add('btn-group', 'btn-group-sm');
         doneButton.classList.add('btn', 'btn-success');
         doneButton.textContent = 'Готово';
+        doneButton.addEventListener('click', function() {
+            tasksList = getFromStorage(listName)
+            let index = tasksList.findIndex((item) => (item.id === task.id))
+            tasksList[index].done = !(tasksList[index].done)
+            pushToStorage(listName, tasksList)
+            itemHTML.classList.toggle('list-group-item-success');
+        })
+
         deleteButton.classList.add('btn', 'btn-danger');
         deleteButton.textContent = 'Удалить';
+        deleteButton.addEventListener('click', function() {  
+            if (confirm('Вы уверены?')) {
+                tasksList = getFromStorage(listName)
+                let index = tasksList.findIndex((item) => (item.id === task.id))
+                tasksList.splice(index, 1)
+                pushToStorage(listName, tasksList)
+                itemHTML.remove();
+            }
+        });
 
         buttonGroup.append(doneButton);
         buttonGroup.append(deleteButton);
-        itemObject.item.append(buttonGroup);
+        itemHTML.append(buttonGroup);
 
         return {
-            itemObject,
-            doneButton,
-            deleteButton,
+            itemHTML: itemHTML,
+            name: task.name,
+            done: task.done,
+            id: task.id,
         };
 
     }
@@ -73,53 +92,15 @@
 
     function getFromStorage(listName) {
         let storage = JSON.parse(localStorage.getItem(listName))
-        if (storage === null) {storage = []}
+        if (!storage) {storage = []}
         return storage
     }
 
-    function addEvents(listName, todoItem, tasks) {
-        if (todoItem.itemObject.done) {
-            todoItem.itemObject.item.classList.toggle('list-group-item-success');
-        }
-        todoItem.doneButton.addEventListener('click', function() {
-            if (todoItem.itemObject.done === false){
-                todoItem.itemObject.done = true;
-                for (let i of tasks) {
-                    if (todoItem.id === i.id) {
-                        i.done = true
-                        pushToStorage(listName, tasks)
-                        break
-                    }
-                }
-            }
-            else{
-                todoItem.itemObject.done = false;
-                for (let i of tasks) {
-                    if (todoItem.id === i.id) {
-                        i.done = false
-                        pushToStorage(listName, tasks)
-                        break
-                    }
-                }
-            }
-            todoItem.itemObject.item.classList.toggle('list-group-item-success');
-        });
-        todoItem.deleteButton.addEventListener('click', function() {
-            if (confirm('Вы уверены?')) {
-                todoItem.itemObject.item.remove();
-                for (let i in tasks) {
-                    if (todoItem.id === tasks[i].id) { 
-                        tasks.splice(i, 1)
-                        pushToStorage(listName, tasks)
-                        break
-                    }
-                }
-            }
-        });
-
-        return todoItem
+    function getMaxId(tasks){
+        let temp = tasks.slice(0)
+        return (temp.length > 0) ? ((temp.sort((a, b) => (b.id-a.id)))[0].id + 1) : 0
     }
-    
+
     function createTodoApp(container, title = "Список дел", listName) {
         let tasks = getFromStorage(listName)
         let todoAppTitle = createAppTitle(title);
@@ -129,10 +110,9 @@
             let todoItem = createTodoItem({
                 name: item.name,
                 done: item.done,
-            });
-            todoItem.id = item.id
-            todoItem = addEvents(listName, todoItem, tasks)
-            todoList.append(todoItem.itemObject.item);
+                id: item.id,
+            }, listName);
+            todoList.append(todoItem.itemHTML);
         }
 
         container.append(todoAppTitle);
@@ -147,31 +127,19 @@
         });
 
         todoItemForm.form.addEventListener('submit', function(e){
+            tasks = getFromStorage(listName)
             e.preventDefault();
             todoItemForm.button.setAttribute('disabled', true);
-
             let todoItem = createTodoItem({
                 name: todoItemForm.input.value,
-                done: false
-            });
-            todoItem.id = (function(tasks) {
-                if (!tasks){
-                    return 0
-                }
-                let maxId = -1
-                for (i of tasks){
-                    if (i.id > maxId){
-                        maxId = i.id
-                    }
-                }
-                return maxId + 1
-            })(tasks)
-            todoItem = addEvents(listName, todoItem, tasks)
-            todoList.append(todoItem.itemObject.item);
+                done: false,
+                id: getMaxId(tasks)
+            }, listName);
+            todoList.append(todoItem.itemHTML);
             tasks.push({
                 id: todoItem.id,
-                name: todoItemForm.input.value,
-                done: todoItem.itemObject.done,
+                name: todoItem.name,
+                done: todoItem.done,
             });
             pushToStorage(listName, tasks);
             todoItemForm.input.value = '';

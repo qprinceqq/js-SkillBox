@@ -1,11 +1,9 @@
-function getAge(birthYear) {
-    let currentDate = new Date()
-    let currentYear = currentDate.getFullYear()
-    return currentYear - birthYear
+// Создайте функцию с названием getAge(), которая будет рассчитывать возраст по году рождения. 
+// Функция должна сделать расчёт возраста по текущему году. 
+
+
+function getAge(birth_year) {
+    return (new Date()).getFullYear() - birth_year
 }
 
-function Main() {
-    console.log('Ваш возраст:', getAge(2004))
-}
-
-Main()
+console.log('Ваш возраст:', getAge(2004))

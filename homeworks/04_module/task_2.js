@@ -1,16 +1,19 @@
-let count = 12;
-let array = [];
-let ran;
+// Создайте с помощью цикла for массив упорядоченных чисел с количеством чисел, равным count.
+// С помощью второго цикла перемешайте этот массив. 
 
-for (let x = 1; x <= count; x++){
-    array.push(x)
-}
+let count = 12;
+let random;
+
+// создание массива 0, 1, 2 и тд
+let array = Array.from({length: count}, (_, i) => (i))
 console.log(array)
 
-for (let x = 0; x < count; x++){
-    ran = Math.floor(Math.random() * count)
-    temp = array[ran]
-    array[ran] = array[x]
+
+// перемешивание массива
+for (let x in array){
+    random = Math.floor(Math.random() * count)
+    temp = array[random]
+    array[random] = array[x]
     array[x] = temp
 }
 console.log(array)
