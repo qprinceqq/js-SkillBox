@@ -64,6 +64,7 @@
             main.append(createCardNCondition(shuffleCardList[i], i));
         }
     }
+    
     let tryCards = [];
     window.createCardsApp = createCardsApp;
 })();
