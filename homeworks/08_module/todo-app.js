@@ -102,10 +102,12 @@
     }
 
     function createTodoApp(container, title = "Список дел", listName) {
-        let tasks = getFromStorage(listName)
+        // Создаем титульник
         let todoAppTitle = createAppTitle(title);
-        let todoItemForm = createTodoItemForm();
+
+        // Создаем список задач todoList
         let todoList = createTodoList();
+        let tasks = getFromStorage(listName)
         for (item of tasks){
             let todoItem = createTodoItem({
                 name: item.name,
@@ -114,18 +116,16 @@
             }, listName);
             todoList.append(todoItem.itemHTML);
         }
-
-        container.append(todoAppTitle);
-        container.append(todoItemForm.form);
-        container.append(todoList);
         
-        
+        //Создаем форму для ввода новых задач 
+        let todoItemForm = createTodoItemForm();
         todoItemForm.input.addEventListener('input', function() {
             if (todoItemForm.button.getAttribute('disabled')){
                 todoItemForm.button.removeAttribute('disabled');
             }
         });
 
+        //Добавляем форме ивент, который будет заполнять todoList
         todoItemForm.form.addEventListener('submit', function(e){
             tasks = getFromStorage(listName)
             e.preventDefault();
@@ -144,6 +144,11 @@
             pushToStorage(listName, tasks);
             todoItemForm.input.value = '';
         });
+
+        //Добавляем все элементы к уонтейнеру
+        container.append(todoAppTitle);
+        container.append(todoItemForm.form);
+        container.append(todoList);
     }  
     window.createTodoApp = createTodoApp;
 })();

@@ -56,7 +56,6 @@
         return card;
     }
 
-
     function createCardsApp(){
         pushToStorage('key', 0);
         let shuffleCardList = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8].sort(() => Math.random() - 0.5);
