@@ -54,8 +54,7 @@
             if (flag){
                 let search = document.createElement("input");
                 let select = document.createElement("select");
-                let optionList = ["ФИО", "факультет", "год начала обучения", "год окончания обучения"];
-                for (let i of optionList){
+                for (let i of ["ФИО", "факультет", "год начала обучения", "год окончания обучения"]){
                     let option = document.createElement("option");
                     option.textContent = i;
                     select.append(option);
