@@ -1,13 +1,7 @@
 // Напишите функцию filter(), которая создаёт массив email-адресов, не попавших в чёрный список.
 
 function filter(white_list, black_list){
-    let filtered_list = []
-    for (let i of white_list){
-        if (!black_list.includes(i)){
-            filtered_list.push(i)
-        }
-    }
-    return filtered_list
+    return white_list.filter((item) => !black_list.includes(item))
 }
 
 
