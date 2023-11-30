@@ -98,7 +98,7 @@
 
     function getMaxId(tasks){
         let temp = tasks.slice(0)
-        return (temp.length > 0) ? ((temp.sort((a, b) => (b.id-a.id)))[0].id + 1) : 0
+        return (temp.length) ? ((temp.sort((a, b) => (b.id-a.id)))[0].id + 1) : 0
     }
 
     function createTodoApp(container, title = "Список дел", listName) {
@@ -120,9 +120,7 @@
         //Создаем форму для ввода новых задач 
         let todoItemForm = createTodoItemForm();
         todoItemForm.input.addEventListener('input', function() {
-            if (todoItemForm.button.getAttribute('disabled')){
-                todoItemForm.button.removeAttribute('disabled');
-            }
+            todoItemForm.button.disabled = !todoItemForm.button.disabled
         });
 
         //Добавляем форме ивент, который будет заполнять todoList
